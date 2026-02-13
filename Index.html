@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoxSS | Powerful ServerSide</title>
+    <style>
+        /* Variáveis de Cores Neon */
+        :root {
+            --bg-dark: #050505;
+            --neon-purple: #bc13fe;
+            --neon-blue: #2400ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            background: linear-gradient(45deg, #0a001a, #000428);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Fundo Animado Neon */
+        .neon-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 20% 30%, var(--neon-blue), transparent 40%),
+                        radial-gradient(circle at 80% 70%, var(--neon-purple), transparent 40%);
+            opacity: 0.4;
+            z-index: -1;
+            animation: pulse 8s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        header {
+            margin-top: 20px;
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px var(--neon-purple);
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* Efeito de Vidro (Glassmorphism) */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 450px;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        h2 { margin-bottom: 10px; font-size: 1.2rem; color: #bbb; }
+        .hero-text { font-size: 1.8rem; margin-bottom: 30px; font-weight: bold; }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--neon-purple); box-shadow: 0 0 10px var(--neon-purple); }
+
+        /* Botões Modernos */
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:active { transform: scale(0.9); }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            color: white;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn-primary:hover { box-shadow: 0 0 20px var(--neon-purple); }
+
+        /* Estilos do Executor (Escondido Inicialmente) */
+        #executor-ui { display: none; max-width: 800px; width: 95%; }
+
+        .textbox {
+            width: 100%;
+            height: 200px;
+            background: #0d0d0d;
+            border: 1px solid #222;
+            border-radius: 10px;
+            color: #00ff00;
+            padding: 15px;
+            font-family: 'Consolas', monospace;
+            resize: none;
+            margin-bottom: 15px;
+        }
+
+        .btn-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
+        .btn-action { background: #1a1a1a; color: white; border: 1px solid #333; flex: 1; }
+        .btn-action:hover { background: #333; border-color: var(--neon-blue); }
+
+        .console {
+            width: 100%;
+            height: 150px;
+            background: rgba(0,0,0,0.8);
+            border-top: 2px solid var(--neon-blue);
+            padding: 10px;
+            font-size: 0.85rem;
+            color: #888;
+            overflow-y: auto;
+            text-align: left;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .log-entry { margin-bottom: 5px; border-left: 2px solid var(--neon-purple); padding-left: 8px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="neon-bg"></div>
+    <header>NeoxSS</header>
+
+    <div class="container">
+        <!-- Tela de Login -->
+        <div class="card" id="login-card">
+            <h2>Welcome Of Neox SS</h2>
+            <div class="hero-text">Powerfull ServerSide</div>
+            
+            <input type="text" id="user" placeholder="Usuário">
+            <input type="password" id="pass" placeholder="Senha">
+            
+            <button class="btn-primary" onclick="handleLogin()">ENTRAR</button>
+        </div>
+
+        <!-- Tela do Executor -->
+        <div class="card" id="executor-ui">
+            <div class="hero-text" style="font-size: 1.2rem;">NeoxExecuter</div>
+            <textarea class="textbox" id="scriptInput" placeholder="-- Insira seu script aqui..."></textarea>
+            
+            <div class="btn-row">
+                <button class="btn-action" onclick="executeScript()">Execute</button>
+                <button class="btn-action" onclick="clearBox()">Clear</button>
+                <button class="btn-action" onclick="logConsole('Script Loaded from Cloud...')">Load</button>
+            </div>
+
+            <div class="console" id="consoleOutput">
+                <div class="log-entry">[System]: Aguardando execução...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleLogin() {
+            const user = document.getElementById('user').value;
+            const pass = document.getElementById('pass').value;
+
+            if(user === "Neox" && pass === "14325") {
+                // Animação de saída
+                document.getElementById('login-card').style.transform = "translateY(-100vh)";
+                setTimeout(() => {
+                    document.getElementById('login-card').style.display = "none";
+                    document.getElementById('executor-ui').style.display = "block";
+                    logConsole("Logado com sucesso como " + user);
+                }, 500);
+            } else {
+                alert("Acesso Negado: Usuário ou Senha incorretos.");
+            }
+        }
+
+        function logConsole(message) {
+            const consoleBox = document.getElementById('consoleOutput');
+            const time = new Date().toLocaleTimeString();
+            consoleBox.innerHTML += `<div class="log-entry">[${time}] ${message}</div>`;
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+
+        function executeScript() {
+            const code = document.getElementById('scriptInput').value;
+            if(code.trim() === "") return logConsole("Erro: TextBox vazia.");
+            logConsole("Executando script...");
+            setTimeout(() => logConsole("Script executado com sucesso no servidor."), 800);
+        }
+
+        function clearBox() {
+            document.getElementById('scriptInput').value = "";
+            logConsole("TextBox limpa.");
+        }
+    </script>
+</body>
+</html>
+
